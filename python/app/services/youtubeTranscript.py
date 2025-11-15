@@ -1,10 +1,16 @@
 import re
 import youtube_transcript_api as yta
+from youtube_transcript_api import YouTubeTranscriptApi
+from youtube_transcript_api._errors import (
+    TranscriptsDisabled, 
+    NoTranscriptFound, 
+    VideoUnavailable
+)
 
-"""
-Extracts YouTube video ID from any format of URL.
-"""
 def extract_video_id(url: str) -> str:
+    """
+    Extracts YouTube video ID from any format of URL.
+    """
     patterns = [
         r"v=([A-Za-z0-9_\-]{11})",
         r"youtu\.be/([A-Za-z0-9_\-]{11})",
@@ -18,11 +24,10 @@ def extract_video_id(url: str) -> str:
             return match.group(1)
     return ""
 
-
-"""
-Converts seconds to HH:MM:SS format.
-"""
 def format_timestamp(seconds: float) -> str:
+    """
+    Converts seconds to HH:MM:SS format.
+    """
     seconds = int(seconds)
     h = seconds // 3600
     m = (seconds % 3600) // 60
@@ -36,47 +41,42 @@ def format_timestamp(seconds: float) -> str:
 
 def get_youtube_transcript(
     url: str,
-    preferred_lang="en",
-    include_timestamps: bool = True
+    preferred_lang: str = "en"
 ) -> str:
-    """
-    Returns a formatted transcript.
-    If include_timestamps=False → returns plain text transcript.
-    """
-
     video_id = extract_video_id(url)
     if not video_id:
         return "Error: Could not extract video ID from URL."
 
     try:
-        listings = yta.YouTubeTranscriptApi.list_transcripts(video_id)
+        ytt_api = yta.YouTubeTranscriptApi()
+        listings = ytt_api.list(video_id)
 
         try:
             transcript_obj = listings.find_transcript([preferred_lang])
         except yta._errors.NoTranscriptFound:
-            transcript_obj = listings.find_generated_transcript([preferred_lang])
-        except Exception:
-            transcript_obj = next(iter(listings))
+            try:
+                transcript_obj = listings.find_generated_transcript([preferred_lang])
+            except yta._errors.NoTranscriptFound:
+                try:
+                    transcript_obj = next(iter(listings))
+                except StopIteration:
+                    raise ValueError("Could not extract video ID from URL.")
 
         transcript = transcript_obj.fetch()
 
         lines = []
         for entry in transcript:
-            text = entry["text"].replace("\n", " ")
+            text = entry.text.replace("\n", " ")
 
-            if include_timestamps:
-                t = format_timestamp(entry["start"])
-                lines.append(f"[{t}] {text}")
-            else:
-                lines.append(text)
+            lines.append(text)
 
         return "\n".join(lines)
-
+    
     except yta._errors.TranscriptsDisabled:
-        return "Error: Transcripts are disabled for this video."
+        raise ValueError("Transcripts are disabled for this video.")
     except yta._errors.NoTranscriptFound:
-        return "Error: No transcript available for this video."
+        raise ValueError("No transcript available for this video.")
     except yta._errors.VideoUnavailable:
-        return "Error: This video is unavailable."
+        raise ValueError("This video is unavailable.")
     except Exception as e:
-        return f"Error: {str(e)}"
+        raise ValueError(f"Failed to fetch transcript: {str(e)}")
