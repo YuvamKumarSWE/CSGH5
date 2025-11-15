@@ -1,7 +1,5 @@
 import pymupdf as pdf
 from fastapi import UploadFile
-from io import BytesIO
-
 async def extract_pdf_text(pdf_file):
     """
     Extract text from a PDF file.
