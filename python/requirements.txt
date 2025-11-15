@@ -1,4 +1,4 @@
-fastapi
-uvicorn
-pydantic
+fastapi>=0.104.1,<1.0.0
+uvicorn>=0.24.0,<1.0.0
+pydantic>=2.5.0,<3.0.0
 pymupdf
