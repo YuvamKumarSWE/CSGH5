@@ -5,21 +5,10 @@ This repository contains three main project folders:
 ## 📁 Project Structure
 
 ### 1. Frontend
-A React application built with Vite and styled with Tailwind CSS.
+A placeholder folder for future frontend implementation.
 
-**Tech Stack:**
-- React (JavaScript)
-- Vite
-- Tailwind CSS v3
-- PostCSS & Autoprefixer
-
-**Getting Started:**
-```bash
-cd frontend
-npm install
-npm run dev     # Start development server
-npm run build   # Build for production
-```
+**Current Contents:**
+- `notes.txt` - Placeholder file
 
 ### 2. Python
 A FastAPI backend application with a modular API structure.
