@@ -19,12 +19,8 @@ async def extract_pdf_text(pdf_file):
             doc = pdf.open(pdf_file)
         else:
             # Handle UploadFile object from FastAPI
-            # Read the file content
-            content = await pdf_file.read()
-            # Seek back to the beginning in case it's read again
-            await pdf_file.seek(0)
-            # Open PDF from bytes
-            doc = pdf.open(stream=content, filetype="pdf")
+            # Use the file-like object directly to avoid loading the entire file into memory
+            doc = pdf.open(stream=pdf_file.file, filetype="pdf")
 
         extracted_text = []
         
