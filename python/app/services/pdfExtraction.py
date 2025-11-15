@@ -13,11 +13,19 @@ async def extract_pdf_text(pdf_file):
         # Handle file path string vs UploadFile object
         if isinstance(pdf_file, str):
             # Handle file path string
-            doc = pdf.open(pdf_file)
+            try:
+                doc = pdf.open(pdf_file)
+            except FileNotFoundError:
+                raise FileNotFoundError(f"PDF file not found: {pdf_file}")
+            except PermissionError:
+                raise PermissionError(f"Permission denied when accessing PDF file: {pdf_file}")
         else:
             # Handle UploadFile object from FastAPI
-            # Use the file-like object directly to avoid loading the entire file into memory
-            doc = pdf.open(stream=pdf_file.file, filetype="pdf")
+            try:
+                # Use the file-like object directly to avoid loading the entire file into memory
+                doc = pdf.open(stream=pdf_file.file, filetype="pdf")
+            except (IOError, OSError) as e:
+                raise ValueError(f"Failed to read uploaded PDF file: {str(e)}")
 
         extracted_text = []
         
@@ -33,9 +41,5 @@ async def extract_pdf_text(pdf_file):
 
         doc.close()
         return "".join(extracted_text)
-    except FileNotFoundError:
-        raise FileNotFoundError(f"PDF file not found: {pdf_file}")
-    except PermissionError:
-        raise PermissionError(f"Permission denied when accessing PDF file: {pdf_file}")
     except Exception as e:
         raise ValueError(f"Failed to extract text from PDF: {str(e)}")
