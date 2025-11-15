@@ -6,6 +6,3 @@ router = APIRouter()
 def health_check():
     return {"status": "healthy"}
 
-@router.get("/api/items")
-def get_items():
-    return {"items": []}
