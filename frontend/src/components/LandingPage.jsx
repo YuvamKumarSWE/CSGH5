@@ -1,10 +1,31 @@
-import { Box, Container, Typography, Button } from '@mui/material';
+import { Box, Container, Typography, Button, Alert, CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import ApiIcon from '@mui/icons-material/Api';
+import { useState } from 'react';
+import apiService from '../services/api';
 
 function LandingPage() {
   const navigate = useNavigate();
+  const [apiMessage, setApiMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleTestApi = async () => {
+    setLoading(true);
+    setError('');
+    setApiMessage('');
+    
+    try {
+      const data = await apiService.getBaseMessage();
+      setApiMessage(data.message);
+    } catch (err) {
+      setError(err.response?.data?.message || err.message || 'Failed to connect to API. Make sure the FastAPI server is running on port 8000.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Box
@@ -98,6 +119,65 @@ function LandingPage() {
           >
             Get Started
           </Button>
+
+          {/* API Test Section */}
+          <Box sx={{ mt: 4 }}>
+            <Button
+              variant="outlined"
+              size="medium"
+              startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <ApiIcon />}
+              onClick={handleTestApi}
+              disabled={loading}
+              sx={{
+                py: 1,
+                px: 3,
+                fontSize: '0.9rem',
+                fontWeight: 500,
+                borderColor: 'primary.main',
+                color: 'primary.main',
+                '&:hover': {
+                  borderColor: 'primary.light',
+                  bgcolor: 'rgba(88, 166, 255, 0.1)',
+                },
+              }}
+            >
+              {loading ? 'Connecting...' : 'Test API Connection'}
+            </Button>
+
+            {apiMessage && (
+              <Alert 
+                severity="success" 
+                sx={{ 
+                  mt: 2, 
+                  maxWidth: 500, 
+                  mx: 'auto',
+                  bgcolor: 'rgba(46, 160, 67, 0.1)',
+                  color: 'success.light',
+                }}
+              >
+                <Typography variant="body2">
+                  <strong>API Response:</strong> {apiMessage}
+                </Typography>
+              </Alert>
+            )}
+
+            {error && (
+              <Alert 
+                severity="error" 
+                sx={{ 
+                  mt: 2, 
+                  maxWidth: 500, 
+                  mx: 'auto',
+                  bgcolor: 'rgba(248, 81, 73, 0.1)',
+                  color: 'error.light',
+                }}
+              >
+                <Typography variant="body2">
+                  {error}
+                </Typography>
+              </Alert>
+            )}
+          </Box>
           
           <Box
             sx={{
