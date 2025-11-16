@@ -1,97 +1,71 @@
 import os
+import json
 from dotenv import load_dotenv
-import google.generativeai as genai
+from google import genai
 from pathlib import Path
 
 project_root = Path(__file__).resolve().parents[2]
 
-_genai_configured = False
+def _get_api_key():
+    """Get the Gemini API key from environment variables."""
+    load_dotenv(dotenv_path=project_root / ".env")
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        raise ValueError("GEMINI_API_KEY not found in environment variables!")
+    return api_key
 
-def _ensure_genai_configured():
-    global _genai_configured
-    if not _genai_configured:
-        # Load the .env file
-        load_dotenv(dotenv_path=project_root / ".env")
-        # Retrieve the API key
-        api_key = os.getenv("GEMINI_API_KEY")
-        if not api_key:
-            raise ValueError("GEMINI_API_KEY not found in environment variables!")
-        # Configure Gemini
-        genai.configure(api_key=api_key)
-        _genai_configured = True
+def extract_unique_topics_with_text(text):
+    """
+    Extract main topics from large text using the Gemini 2.5-pro model.
+    Returns a JSON object where each topic maps to its unique corresponding text.
+    Removes duplicate/similar content to ensure uniqueness.
 
-def generate_content(prompt, model_name='gemini-2.0-flash-exp', temperature=0.7):
+    Args:
+        text (str): The large text to process
+
+    Returns:
+        dict: JSON object with topics as keys and unique text snippets as values
     """
-    Generic function to call Gemini and return text.
-    """
-    _ensure_genai_configured()
-    model = genai.GenerativeModel(model_name)
-    response = model.generate_content(
-        prompt=prompt,
-        generation_config={"temperature": temperature}
+    prompt = f"""You are a study guide assistant specialized in content deduplication and topic extraction.
+
+Analyze the following text and:
+1. Identify all main topics covered
+2. Extract ALL unique text content related to each topic (be comprehensive)
+3. Remove ONLY exact duplicates or near-identical phrases
+4. Keep different explanations of the same concept if they provide unique value
+5. Consolidate related information under the most appropriate topic
+
+Return ONLY a valid JSON object where:
+- Keys are the main topics (clear, concise topic names)
+- Values are the consolidated unique text content (combine related sentences, avoid redundancy)
+
+TEXT TO ANALYZE:
+{text}
+
+Return ONLY the JSON object, no other text."""
+
+    client = genai.Client(api_key=_get_api_key())
+    response = client.models.generate_content(
+        model="gemini-2.5-pro",
+        contents=prompt
     )
-    return response.text
 
-def identify_topics(text_chunk):
-    """
-    Ask Gemini to extract main topics from a text chunk.
-    """
-    prompt = f"""
-    You are a study guide assistant.
-    Here is the text:
-    {text_chunk}
+    # Extract the JSON from the response
+    response_text = response.text.strip()
 
-    Task: Identify 5-10 main topics in the text.
-    Return them as a JSON array of strings.
-    """
-    response = generate_content(prompt)
-    
-    # Attempt to parse JSON
-    import json
+    # Try to parse the JSON response
     try:
-        topics = json.loads(response)
+        topics_data = json.loads(response_text)
+        return topics_data
     except json.JSONDecodeError:
-        # fallback if JSON parsing fails
-        topics = [line.strip("- ").strip() for line in response.splitlines() if line.strip()]
-    return topics
-
-def synthesize_topic(topic, relevant_text):
-    """
-    Ask Gemini to generate a study guide section for one topic.
-    """
-    prompt = f"""
-    You are a study guide creator.
-    Topic: {topic}
-    Relevant text: {relevant_text}
-
-    Task: Write a detailed study guide section in Markdown.
-    Include headings, examples, and explanations.
-    """
-    return generate_content(prompt)
-
-def compile_study_guide(text_chunks):
-    all_topics = set()
-    topic_sections = {}
-
-    # Stage 1: Identify topics
-    for chunk in text_chunks:
-        topics = identify_topics(chunk)
-        all_topics.update(topics)
-
-    # Stage 2: Generate sections
-    for topic in all_topics:
-        # Gather relevant text (simple approach: concatenate all chunks)
-        relevant_text = " ".join(text_chunks)
-        section_text = synthesize_topic(topic, relevant_text)
-        topic_sections[topic] = section_text
-
-    # Stage 3: Compile final guide
-    guide = "# Study Guide\n\n## Table of Contents\n"
-    for i, topic in enumerate(topic_sections.keys(), 1):
-        guide += f"{i}. {topic}\n"
-    
-    guide += "\n"
-    for topic, section in topic_sections.items():
-        guide += f"## {topic}\n{section}\n\n"
-
-    return guide
+        # If the response contains Markdown code blocks, extract the JSON
+        if "```json" in response_text:
+            json_str = response_text.split("```json")[1].split("```")[0].strip()
+            topics_data = json.loads(json_str)
+            return topics_data
+        elif "```" in response_text:
+            json_str = response_text.split("```")[1].split("```")[0].strip()
+            topics_data = json.loads(json_str)
+            return topics_data
+        else:
+            raise ValueError(f"Failed to parse JSON from Gemini response: {response_text}")
