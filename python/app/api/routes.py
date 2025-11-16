@@ -2,11 +2,17 @@ from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 from typing import List
 import json
 import time
+import os
+from dotenv import load_dotenv
 from app.services.pdfExtraction import extract_pdf_text
 from app.services.webArticleExtraction import extract_web_article
 from app.services.youtubeTranscript import get_youtube_transcript
 from app.services.gemini import extract_unique_topics_with_text, make_study_guide, format_study_guide_as_markdown
 from app.utils.logger import setup_logger
+from app.models.schemas import PasswordRequest, PasswordResponse
+
+# Load environment variables
+load_dotenv()
 
 logger = setup_logger(__name__)
 router = APIRouter()
@@ -16,6 +22,21 @@ def health_check():
     """Health check endpoint to verify API is running."""
     logger.info("Health check requested")
     return {"status": "healthy"}
+
+@router.post("/api/verify-password", response_model=PasswordResponse)
+def verify_password(request: PasswordRequest):
+    """Verify the access password."""
+    logger.info("Password verification requested")
+    
+    # Get password from environment variable
+    correct_password = os.getenv("ACCESS_PASSWORD", "your_secure_password_here")
+    
+    if request.password == correct_password:
+        logger.info("Password verification successful")
+        return PasswordResponse(success=True, message="Access granted")
+    else:
+        logger.warning("Password verification failed")
+        return PasswordResponse(success=False, message="Invalid password")
 
 @router.post("/api/get-output")
 async def get_output(

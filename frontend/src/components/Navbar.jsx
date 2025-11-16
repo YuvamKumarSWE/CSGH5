@@ -23,7 +23,7 @@ function Navbar() {
             color: 'text.primary',
           }}
         >
-          Auto-Note Fusion
+          CSGH5
         </Typography>
         <Box sx={{ display: 'flex', gap: 2 }}>
           {/* Placeholder for future user-related components */}

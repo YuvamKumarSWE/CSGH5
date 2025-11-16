@@ -1,14 +1,21 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.routes import router
+import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 app = FastAPI()
 
-# CORS configuration
+# CORS configuration - use environment variable or fallback to localhost
+frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
 origins = [
-    "http://localhost:5173",  # Vite default port
-    "http://localhost:5174",  # Alternative Vite port
-    "http://localhost:3000",  # Alternative React port
+    frontend_url,
+    "http://localhost:5173",  # Fallback Vite default port
+    "http://localhost:5174",  # Fallback alternative Vite port
+    "http://localhost:3000",  # Fallback alternative React port
 ]
 
 app.add_middleware(

@@ -76,7 +76,7 @@ function LandingPage() {
               mb: 2,
             }}
           >
-            Auto-Note Fusion
+            CSGH5
           </Typography>
           
           <Typography
