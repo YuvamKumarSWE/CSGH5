@@ -14,15 +14,21 @@ project_root = Path(__file__).resolve().parents[2]
 _last_api_call = 0
 _min_delay_between_calls = 2.0  # 2 seconds between calls
 
-def _get_api_key():
-    """Get the Gemini API key from environment variables."""
+def _get_api_key(provided_key=None):
+    """Get the Gemini API key from provided parameter or environment variables."""
     try:
+        # Use provided key if available
+        if provided_key and isinstance(provided_key, str) and provided_key.strip():
+            logger.debug("Using user-provided API key")
+            return provided_key.strip()
+        
+        # Fall back to environment variable
         load_dotenv(dotenv_path=project_root / ".env")
         api_key = os.getenv("GEMINI_API_KEY")
         if not api_key:
             logger.error("GEMINI_API_KEY not found in environment variables")
             raise ValueError("GEMINI_API_KEY not found in environment variables!")
-        logger.debug("Successfully retrieved GEMINI_API_KEY")
+        logger.debug("Successfully retrieved GEMINI_API_KEY from environment")
         return api_key
     except Exception as e:
         logger.error(f"Error loading API key: {str(e)}")
@@ -133,7 +139,7 @@ def _call_gemini_with_retry(client, model, prompt, max_retries=5, initial_delay=
     
     raise Exception("Failed to get valid response from Gemini API")
 
-def extract_unique_topics_with_text(text):
+def extract_unique_topics_with_text(text, api_key=None):
     """
     Extract main topics from large text using the Gemini 2.5-pro model.
     Returns a JSON object where each topic maps to its unique corresponding text.
@@ -141,6 +147,7 @@ def extract_unique_topics_with_text(text):
 
     Args:
         text (str): The large text to process
+        api_key (str, optional): User-provided API key, uses environment key if not provided
 
     Returns:
         dict: JSON object with topics as keys and unique text snippets as values
@@ -178,7 +185,7 @@ Return ONLY the JSON object, no other text."""
 
     try:
         logger.debug("Initializing Gemini API client for topic extraction")
-        client = genai.Client(api_key=_get_api_key())
+        client = genai.Client(api_key=_get_api_key(api_key))
         
         logger.info("Sending request to Gemini API for topic extraction")
         response = _call_gemini_with_retry(
@@ -223,7 +230,7 @@ Return ONLY the JSON object, no other text."""
         logger.error(f"Unexpected error during topic extraction: {str(e)}", exc_info=True)
         raise ValueError(f"Failed to extract topics: {str(e)}")
 
-def make_study_guide(topics_data, include_summary=True, include_key_points=True):
+def make_study_guide(topics_data, include_summary=True, include_key_points=True, api_key=None):
     """
     Generate a comprehensive study guide from topic data using a SINGLE API call.
 
@@ -231,6 +238,7 @@ def make_study_guide(topics_data, include_summary=True, include_key_points=True)
         topics_data (dict): Dictionary with topics as keys and content as values
         include_summary (bool): Whether to generate a summary for each topic
         include_key_points (bool): Whether to extract key points for each topic
+        api_key (str, optional): User-provided API key, uses environment key if not provided
 
     Returns:
         dict: A structured study guide with formatted content
@@ -250,7 +258,7 @@ def make_study_guide(topics_data, include_summary=True, include_key_points=True)
 
     try:
         logger.debug("Initializing Gemini API client for study guide generation")
-        client = genai.Client(api_key=_get_api_key())
+        client = genai.Client(api_key=_get_api_key(api_key))
 
         # Determine the depth and complexity of the guide based on content length
         total_content_length = sum(len(str(content)) for content in topics_data.values())

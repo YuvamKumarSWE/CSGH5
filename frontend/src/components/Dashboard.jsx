@@ -13,6 +13,7 @@ function Dashboard() {
   const [output, setOutput] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [apiKey, setApiKey] = useState('');
 
   const handleAddItem = (item) => {
     setItems([...items, item]);
@@ -47,6 +48,11 @@ function Dashboard() {
       };
       
       formData.append('sources', JSON.stringify(otherSources));
+      
+      // Add API key if provided
+      if (apiKey && apiKey.trim()) {
+        formData.append('api_key', apiKey.trim());
+      }
 
       // Call the API
       const response = await apiService.getOutput(formData);
@@ -90,6 +96,41 @@ function Dashboard() {
         <Typography variant="h4" sx={{ mb: 4, color: 'text.primary', fontWeight: 600 }}>
           Dashboard
         </Typography>
+
+        {/* API Key Input */}
+        <Box
+          sx={{
+            mb: 3,
+            p: 3,
+            bgcolor: 'background.paper',
+            borderRadius: 2,
+            boxShadow: 1,
+          }}
+        >
+          <Typography variant="h6" sx={{ mb: 2, color: 'text.primary', fontWeight: 600 }}>
+            🔑 Gemini API Key (Optional)
+          </Typography>
+          <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
+            Enter your own Gemini API key or leave blank to use the default. Get your key from{' '}
+            <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer">
+              Google AI Studio
+            </a>
+          </Typography>
+          <input
+            type="password"
+            value={apiKey}
+            onChange={(e) => setApiKey(e.target.value)}
+            placeholder="Enter your Gemini API key (optional)"
+            style={{
+              width: '100%',
+              padding: '12px',
+              fontSize: '14px',
+              border: '1px solid #ddd',
+              borderRadius: '8px',
+              fontFamily: 'monospace',
+            }}
+          />
+        </Box>
 
         <Box
           sx={{

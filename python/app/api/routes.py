@@ -20,7 +20,8 @@ def health_check():
 @router.post("/api/get-output")
 async def get_output(
     pdfs: List[UploadFile] = File(default=[]),
-    sources: str = Form(default="{}")
+    sources: str = Form(default="{}"),
+    api_key: str = Form(default=None)
 ):
     """
     Process multiple input sources (PDFs, URLs, videos, text) and generate a study guide.
@@ -28,6 +29,7 @@ async def get_output(
     Args:
         pdfs: List of PDF files to extract text from
         sources: JSON string containing URLs, video links, and text inputs
+        api_key: Optional Gemini API key provided by the user
     
     Returns:
         Study guide markdown as a string
@@ -168,7 +170,7 @@ async def get_output(
         # Extract topics
         try:
             logger.info(f"[Request {request_id}] Extracting topics from combined content")
-            topics_data = extract_unique_topics_with_text(final_output_text)
+            topics_data = extract_unique_topics_with_text(final_output_text, api_key=api_key)
             logger.info(f"[Request {request_id}] Successfully extracted topics")
         except Exception as e:
             logger.error(f"[Request {request_id}] Failed to extract topics: {str(e)}", exc_info=True)
@@ -180,7 +182,7 @@ async def get_output(
         # Generate study guide
         try:
             logger.info(f"[Request {request_id}] Generating study guide from topics")
-            guide = make_study_guide(topics_data, include_summary=True, include_key_points=True)
+            guide = make_study_guide(topics_data, include_summary=True, include_key_points=True, api_key=api_key)
             
             if "error" in guide:
                 logger.error(f"[Request {request_id}] Study guide generation returned error: {guide['error']}")
