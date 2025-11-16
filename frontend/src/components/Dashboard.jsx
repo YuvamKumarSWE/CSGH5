@@ -51,11 +51,32 @@ function Dashboard() {
       // Call the API
       const response = await apiService.getOutput(formData);
       
-      // Display the response (if it's a string, use it directly; otherwise stringify)
-      setOutput(typeof response === 'string' ? response : JSON.stringify(response, null, 2));
+      // Extract the study guide from the response
+      if (response && response.study_guide) {
+        setOutput(response.study_guide);
+      } else if (typeof response === 'string') {
+        setOutput(response);
+      } else {
+        setOutput(JSON.stringify(response, null, 2));
+      }
     } catch (err) {
-      setError('Failed to generate study guide. Please try again.');
       console.error('Error:', err);
+      
+      // Extract error message from response if available
+      let errorMessage = 'Failed to generate study guide. Please try again.';
+      
+      if (err.response?.data?.detail) {
+        errorMessage = err.response.data.detail;
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      
+      // Add helpful context for rate limit errors
+      if (errorMessage.includes('rate limit') || errorMessage.includes('quota')) {
+        errorMessage = '⚠️ API rate limit reached. Please wait 1-2 minutes and try again. Consider reducing the number of sources or amount of content.';
+      }
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
