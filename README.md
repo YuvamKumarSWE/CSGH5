@@ -1,8 +1,8 @@
-# 🚀 **CSGH5: Intelligent Multi-Source Study Guide Generator**
+# 🚀 **StudyForgeAI: Intelligent Multi-Source Study Guide Generator**
 
 ## **Executive Overview**
 
-CSGH5 is a **sophisticated AI-powered educational platform** that revolutionizes how students and professionals synthesize knowledge from diverse information sources. This full-stack application leverages cutting-edge natural language processing and Google's **Gemini 2.5 Flash** AI model to automatically generate comprehensive, well-structured study guides from PDFs, web articles, YouTube videos, and raw text inputs—all through an elegant, modern web interface.
+StudyForgeAI is a **sophisticated AI-powered educational platform** that revolutionizes how students and professionals synthesize knowledge from diverse information sources. This full-stack application leverages cutting-edge natural language processing and Google's **Gemini 2.5 Flash** AI model to automatically generate comprehensive, well-structured study guides from PDFs, web articles, YouTube videos, and raw text inputs—all through an elegant, modern web interface.
 
 ---
 
@@ -10,7 +10,7 @@ CSGH5 is a **sophisticated AI-powered educational platform** that revolutionizes
 
 ### **Core Functionality**
 
-CSGH5 transforms the overwhelming task of consolidating learning materials into a seamless, intelligent workflow:
+StudyForgeAI transforms the overwhelming task of consolidating learning materials into a seamless, intelligent workflow:
 
 1. **Multi-Modal Content Ingestion**: Users can upload PDFs, paste URLs to web articles, provide YouTube video links, and input raw text—all simultaneously through an intuitive dashboard
 2. **Intelligent Content Extraction**: The system employs specialized extraction engines for each content type, preserving context and structure
@@ -215,7 +215,7 @@ Output: JSON object {topic: unique_content}
 
 ## 🎓 **Impact**
 
-CSGH5 represents a **paradigm shift in knowledge synthesis**, transforming hours of manual note-taking and content organization into a streamlined, AI-powered workflow that takes minutes. By intelligently combining multiple content sources and leveraging state-of-the-art language models, this platform empowers learners to focus on understanding and retention rather than tedious consolidation tasks.
+StudyForgeAI represents a **paradigm shift in knowledge synthesis**, transforming hours of manual note-taking and content organization into a streamlined, AI-powered workflow that takes minutes. By intelligently combining multiple content sources and leveraging state-of-the-art language models, this platform empowers learners to focus on understanding and retention rather than tedious consolidation tasks.
 
-The **sophisticated AI pipeline**, **enterprise-grade architecture**, and **polished user experience** demonstrate mastery of full-stack development, advanced API integration, and modern web application best practices—making CSGH5 a standout portfolio piece showcasing both technical depth and practical utility.
+The **sophisticated AI pipeline**, **enterprise-grade architecture**, and **polished user experience** demonstrate mastery of full-stack development, advanced API integration, and modern web application best practices—making StudyForgeAI a standout portfolio piece showcasing both technical depth and practical utility.
 

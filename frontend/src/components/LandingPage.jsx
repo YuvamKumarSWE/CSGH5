@@ -76,7 +76,7 @@ function LandingPage() {
               mb: 2,
             }}
           >
-            CSGH5
+            StudyForgeAI
           </Typography>
           
           <Typography

@@ -23,7 +23,7 @@ function Navbar() {
             color: 'text.primary',
           }}
         >
-          CSGH5
+          StudyForgeAI
         </Typography>
         <Box sx={{ display: 'flex', gap: 2 }}>
           {/* Placeholder for future user-related components */}
