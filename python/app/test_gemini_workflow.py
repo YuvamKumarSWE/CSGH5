@@ -2,16 +2,6 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-# Determine the project root (2 levels up from this file)
-project_root = Path(__file__).resolve().parents[2]
-
-# Load the .env file
-load_dotenv(dotenv_path=project_root / ".env")
-api_key = os.getenv("GEMINI_API_KEY")
-
-import google.generativeai as genai
-genai.configure(api_key=api_key)
-
 # Import your module
 from services.gemini import generate_content, identify_topics, synthesize_topic, compile_study_guide
 
