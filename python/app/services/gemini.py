@@ -45,7 +45,7 @@ def identify_topics(text_chunk):
     import json
     try:
         topics = json.loads(response)
-    except:
+    except json.JSONDecodeError:
         # fallback if JSON parsing fails
         topics = [line.strip("- ").strip() for line in response.splitlines() if line.strip()]
     return topics
