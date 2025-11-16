@@ -10,7 +10,7 @@ load_dotenv()
 app = FastAPI()
 
 # CORS configuration - use environment variable or fallback to localhost
-frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
+frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173").rstrip("/")
 origins = [
     frontend_url,
     "http://localhost:5173",  # Fallback Vite default port
