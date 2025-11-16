@@ -2,7 +2,7 @@
 
 ## **Executive Overview**
 
-StudyForgeAI is a **sophisticated AI-powered educational platform** that revolutionizes how students and professionals synthesize knowledge from diverse information sources. This full-stack application leverages cutting-edge natural language processing and Google's **Gemini 2.5 Flash** AI model to automatically generate comprehensive, well-structured study guides from PDFs, web articles, YouTube videos, and raw text inputs—all through an elegant, modern web interface.
+StudyForgeAI is a **sophisticated AI-powered educational platform** that revolutionizes how students and professionals synthesize knowledge from diverse information sources. This full-stack application leverages cutting-edge natural language processing and Google's **Gemini 2.5 Flash Lite** AI model to automatically generate comprehensive, well-structured study guides from PDFs, web articles, YouTube videos, and raw text inputs—all through an elegant, modern web interface.
 
 ---
 
@@ -53,7 +53,7 @@ StudyForgeAI transforms the overwhelming task of consolidating learning material
 - **YouTube Transcript API** - Multi-language transcript extraction with automatic fallback to generated captions
 
 **AI & ML**:
-- **Google GenAI (Gemini 2.5 Flash)** - Advanced language model for topic extraction and content synthesis
+- **Google GenAI (Gemini 2.5 Flash Lite)** - Advanced language model for topic extraction and content synthesis with AI-driven deduplication
 - **Custom retry logic** with exponential backoff and intelligent rate limit handling
 - **Token-aware processing** to optimize API usage and prevent quota exhaustion
 
@@ -63,7 +63,7 @@ StudyForgeAI transforms the overwhelming task of consolidating learning material
 
 ### **Phase 1: Multi-Source Content Extraction**
 
-The system employs **parallel processing** with comprehensive error handling:
+The system processes each source **sequentially** with comprehensive error handling and detailed logging:
 
 **PDF Processing**:
 - Asynchronous file upload handling via FastAPI's `UploadFile`
@@ -87,37 +87,47 @@ The system employs **parallel processing** with comprehensive error handling:
 - Direct text input with sanitization and validation
 - Support for structured notes and user annotations
 
-### **Phase 2: Content Consolidation & Deduplication**
+### **Phase 2: Content Consolidation**
 
-All extracted content streams into a unified processing pipeline:
+All extracted content is concatenated into a unified document with basic normalization:
 
 ```
 Combined Output → [PDF Text] + [Article Content] + [Video Transcripts] + [User Text]
                  ↓
-         Deduplicate & Normalize
+         Whitespace Normalization
                  ↓
          Single Unified Document
 ```
 
-**Request Tracking**: Each processing request receives a unique `request_id` for complete traceability through centralized logging
+**Normalization includes**:
+- Paragraph break normalization (consistent line spacing)
+- Excessive whitespace removal
+- Text structure preservation
 
-### **Phase 3: AI-Powered Topic Extraction**
+**Request Tracking**: Each processing request receives a unique `request_id` (timestamp-based) for complete traceability through centralized logging
 
-**Gemini 2.5 Flash Lite** analyzes the consolidated content with custom prompting:
+### **Phase 3: AI-Powered Topic Extraction & Deduplication**
 
-**Prompt Engineering**:
+**Gemini 2.5 Flash Lite** analyzes the consolidated content using advanced prompt engineering to identify unique topics and remove redundant information:
+
+**Prompt Engineering Strategy**:
 ```
 Role: Study guide assistant specialized in content deduplication
-Task: Identify main topics + Extract ALL unique text content
-Strategy: Remove exact duplicates while preserving different explanations
+Task: 
+  1. Identify all main topics covered
+  2. Extract ALL unique text content related to each topic
+  3. Remove ONLY exact duplicates or near-identical phrases
+  4. Keep different explanations if they provide unique value
+  5. Consolidate related information under appropriate topics
 Output: JSON object {topic: unique_content}
 ```
 
-**Advanced Features**:
+**Key Features**:
+- **AI-driven deduplication**: The LLM intelligently identifies and removes duplicate content through prompt instructions (no algorithmic deduplication)
 - **JSON extraction** with markdown code block fallback parsing
 - **Rate limiting** with 2-second minimum delay between API calls
 - **Intelligent retry logic** extracting retry delays from API error messages
-- **Exponential backoff** with 5 retry attempts and up to 45-second waits
+- **Exponential backoff** with 5 retry attempts and up to 45-second waits for rate limits
 
 ### **Phase 4: Study Guide Synthesis**
 
@@ -168,10 +178,11 @@ Output: JSON object {topic: unique_content}
 ## 🔥 **Standout Features**
 
 ### **1. Enterprise-Grade Error Handling**
-- Comprehensive logging system with colored console output (logger.py)
-- Request ID tracking across the entire pipeline
+- Comprehensive logging system with colored console output (`logger.py`)
+- Timestamp-based request ID tracking across the entire pipeline
 - Detailed exception messages with actionable user guidance
-- Graceful degradation (e.g., if 3 of 5 sources fail, still processes remaining 2)
+- Graceful degradation: if some sources fail, successfully processes remaining sources
+- Per-source error isolation with detailed logging (success/failure tracking)
 
 ### **2. Intelligent Rate Limit Management**
 - Automatic retry delay extraction from API error messages
@@ -201,11 +212,12 @@ Output: JSON object {topic: unique_content}
 
 ## 📊 **Technical Achievements**
 
-✅ **Async/Await Architecture**: Non-blocking I/O for concurrent file processing  
+✅ **Async/Await Architecture**: Non-blocking I/O for file upload handling  
+✅ **Sequential Processing with Error Isolation**: Per-source error handling preventing complete failures  
+✅ **AI-Driven Content Deduplication**: Intelligent prompt engineering for LLM-based deduplication  
 ✅ **Intelligent Prompt Engineering**: Specialized prompts for topic extraction vs. synthesis  
 ✅ **Single-Call Optimization**: Entire study guide generated in one API request  
 ✅ **Comprehensive Logging**: 50+ log statements tracking every operation  
-✅ **Error Isolation**: Per-source error handling preventing complete failures  
 ✅ **Token Optimization**: Adaptive guide complexity based on content length  
 ✅ **Cross-Platform Support**: Unified PDF handling for file paths and uploaded streams  
 ✅ **Modular Design**: 15+ reusable services and components  
@@ -218,4 +230,30 @@ Output: JSON object {topic: unique_content}
 StudyForgeAI represents a **paradigm shift in knowledge synthesis**, transforming hours of manual note-taking and content organization into a streamlined, AI-powered workflow that takes minutes. By intelligently combining multiple content sources and leveraging state-of-the-art language models, this platform empowers learners to focus on understanding and retention rather than tedious consolidation tasks.
 
 The **sophisticated AI pipeline**, **enterprise-grade architecture**, and **polished user experience** demonstrate mastery of full-stack development, advanced API integration, and modern web application best practices—making StudyForgeAI a standout portfolio piece showcasing both technical depth and practical utility.
+
+---
+
+## 🚀 **Future Plans**
+
+We're excited about where we're taking StudyForgeAI next.
+
+### **1. Full User Authentication & Accounts**
+Students will be able to save guides, history, and personalized settings.
+
+### **2. RAG-Powered In-Pipeline Model**
+We plan to integrate **ChromaDB** to store embeddings of user content.
+
+This will:
+- Allow users to process much larger inputs
+- Speed up guide generation
+- Enable multi-session learning and fast retrieval
+
+### **3. New Learning Tools**
+- **AI-generated flashcards**
+- **Personalized study plans**
+- **Topic quizzes**
+- **Progress tracking dashboards**
+- **Collaborative study features**
+
+Our long-term vision is to turn StudyForgeAI into a **full AI study companion** that not only generates notes, but actively helps students learn smarter every day.
 
