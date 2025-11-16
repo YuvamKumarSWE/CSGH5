@@ -3,7 +3,7 @@ from typing import List
 import json
 
 from app.services.pdfExtraction import extract_pdf_text
-from app.services.extraction import extract_web_article
+from app.services.webArticleExtraction import extract_web_article
 from app.services.youtubeTranscript import get_youtube_transcript
 
 router = APIRouter()
