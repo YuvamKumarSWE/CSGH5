@@ -23,7 +23,7 @@ def generate_content(prompt, model_name='gemini-2.0-flash-exp', temperature=0.7)
     model = genai.GenerativeModel(model_name)
     response = model.generate_content(
         prompt=prompt,
-        temperature=temperature
+        generation_config={"temperature": temperature}
     )
     return response.text
 
