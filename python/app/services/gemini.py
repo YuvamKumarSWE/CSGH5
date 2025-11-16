@@ -5,21 +5,26 @@ from pathlib import Path
 
 project_root = Path(__file__).resolve().parents[2]
 
-# Load the .env file
-load_dotenv(dotenv_path=project_root / ".env")
+_genai_configured = False
 
-# Retrieve the API key
-api_key = os.getenv("GEMINI_API_KEY")
-if not api_key:
-    raise ValueError("GEMINI_API_KEY not found in environment variables!")
-
-# Configure Gemini
-genai.configure(api_key=api_key)
+def _ensure_genai_configured():
+    global _genai_configured
+    if not _genai_configured:
+        # Load the .env file
+        load_dotenv(dotenv_path=project_root / ".env")
+        # Retrieve the API key
+        api_key = os.getenv("GEMINI_API_KEY")
+        if not api_key:
+            raise ValueError("GEMINI_API_KEY not found in environment variables!")
+        # Configure Gemini
+        genai.configure(api_key=api_key)
+        _genai_configured = True
 
 def generate_content(prompt, model_name='gemini-2.0-flash-exp', temperature=0.7):
     """
     Generic function to call Gemini and return text.
     """
+    _ensure_genai_configured()
     model = genai.GenerativeModel(model_name)
     response = model.generate_content(
         prompt=prompt,
