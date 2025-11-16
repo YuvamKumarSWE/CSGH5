@@ -1,6 +1,7 @@
 import { Box, Typography, Paper, CircularProgress, Alert } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { useState, useEffect } from 'react';
+import VideoLoadingOverlay from './VideoLoadingOverlay';
 
 // Simple markdown parser for basic formatting
 const parseMarkdown = (text) => {
@@ -111,7 +112,7 @@ const renderMarkdownElement = (element) => {
   }
 };
 
-function OutputDisplay({ output, loading, error }) {
+function OutputDisplay({ output, loading, error, showVideoOverlay, onCloseVideoOverlay }) {
   const [parsedContent, setParsedContent] = useState([]);
   
   useEffect(() => {
@@ -123,24 +124,30 @@ function OutputDisplay({ output, loading, error }) {
 
   if (loading) {
     return (
-      <Paper
-        elevation={0}
-        sx={{
-          p: 4,
-          border: 1,
-          borderColor: 'divider',
-          borderRadius: 2,
-          textAlign: 'center',
-        }}
-      >
-        <CircularProgress sx={{ mb: 2 }} />
-        <Typography variant="h6" sx={{ color: 'text.primary' }}>
-          Generating your study guide...
-        </Typography>
-        <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
-          This may take a few minutes. Please wait...
-        </Typography>
-      </Paper>
+      <>
+        {/* Show video overlay if not closed */}
+        {showVideoOverlay && <VideoLoadingOverlay onClose={onCloseVideoOverlay} />}
+        
+        {/* Regular loader (shown behind video or alone if video closed) */}
+        <Paper
+          elevation={0}
+          sx={{
+            p: 4,
+            border: 1,
+            borderColor: 'divider',
+            borderRadius: 2,
+            textAlign: 'center',
+          }}
+        >
+          <CircularProgress sx={{ mb: 2 }} />
+          <Typography variant="h6" sx={{ color: 'text.primary' }}>
+            Generating your study guide...
+          </Typography>
+          <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
+            This may take a few minutes. Please wait...
+          </Typography>
+        </Paper>
+      </>
     );
   }
 

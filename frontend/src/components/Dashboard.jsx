@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Box, Container, Divider, Typography } from '@mui/material';
 import Navbar from './Navbar';
 import FileUpload from './FileUpload';
@@ -14,6 +14,9 @@ function Dashboard() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [apiKey, setApiKey] = useState('');
+  const [videoOverlayClosed, setVideoOverlayClosed] = useState(false);
+  
+  const outputRef = useRef(null);
 
   const handleAddItem = (item) => {
     setItems([...items, item]);
@@ -27,6 +30,7 @@ function Dashboard() {
     setLoading(true);
     setError('');
     setOutput('');
+    setVideoOverlayClosed(false); // Reset video overlay state for new submission
 
     try {
       // Create FormData to send files
@@ -86,6 +90,23 @@ function Dashboard() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Auto-scroll to output section when loading completes
+  useEffect(() => {
+    if (!loading && (output || error) && outputRef.current) {
+      // Small delay to ensure DOM is fully rendered
+      setTimeout(() => {
+        outputRef.current.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start' 
+        });
+      }, 100);
+    }
+  }, [loading, output, error]);
+
+  const handleCloseVideoOverlay = () => {
+    setVideoOverlayClosed(true);
   };
 
   return (
@@ -158,13 +179,19 @@ function Dashboard() {
 
         {/* Output Section */}
         {(output || loading || error) && (
-          <>
+          <Box ref={outputRef}>
             <Divider sx={{ my: 4 }} />
             <Typography variant="h5" sx={{ mb: 3, color: 'text.primary', fontWeight: 600 }}>
               Output
             </Typography>
-            <OutputDisplay output={output} loading={loading} error={error} />
-          </>
+            <OutputDisplay 
+              output={output} 
+              loading={loading} 
+              error={error}
+              showVideoOverlay={!videoOverlayClosed}
+              onCloseVideoOverlay={handleCloseVideoOverlay}
+            />
+          </Box>
         )}
       </Container>
     </Box>
