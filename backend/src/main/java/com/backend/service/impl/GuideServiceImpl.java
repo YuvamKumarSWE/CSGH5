@@ -58,9 +58,6 @@ public class GuideServiceImpl implements GuideService {
     public GuideDTO save(GuideRequestDTO guideRequestDTO) {
         log.info("Creating new guide");
         
-        if (guideRequestDTO.getContent() == null || guideRequestDTO.getContent().trim().isEmpty()) {
-            throw new InvalidRequestException("Guide content cannot be empty");
-        }
         
         try {
             Guide guide = guideMapper.toEntity(guideRequestDTO);
