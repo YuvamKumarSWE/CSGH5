@@ -94,10 +94,6 @@ public class GuideServiceImpl implements GuideService {
         Guide existingGuide = guideRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Guide", "id", id));
         
-        if (guideRequestDTO.getContent() == null || guideRequestDTO.getContent().trim().isEmpty()) {
-            throw new InvalidRequestException("Guide content cannot be empty");
-        }
-        
         existingGuide.setContent(guideRequestDTO.getContent());
         
         try {
