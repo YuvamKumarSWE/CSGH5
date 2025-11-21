@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: demo
+  
+  # Server Configuration
+  server:
+    port: 8080
+    servlet:
+      context-path: /
+  
+  # PostgreSQL DataSource Configuration
+  datasource:
+    url: 
+    username: 
+    password: 
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+  
+  # JPA/Hibernate Configuration
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+  
+  # MongoDB Configuration
+  data:
+    mongodb:
+      uri: 
+      database: 
+      auto-index-creation: true
+  
+  # Security Configuration
+  security:
+    user:
+      name:
+      password: 
+  
+  # DevTools Configuration
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true
+  

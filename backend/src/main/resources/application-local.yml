@@ -1,0 +1,35 @@
+spring:
+  profiles: local
+  # Server Configuration
+  server:
+    port: 8080
+  
+  # PostgreSQL DataSource Configuration (Local)
+  datasource:
+    url: jdbc:postgresql://localhost:5432/
+    username: 
+    password: 
+    driver-class-name: org.postgresql.Driver
+  
+  # JPA/Hibernate Configuration (Local Development)
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        use_sql_comments: true
+  
+  # MongoDB Configuration (Local)
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/
+      database: 
+  
+  # Security Configuration (Local Development)
+  security:
+    user:
+      name: admin
+      password: admin
