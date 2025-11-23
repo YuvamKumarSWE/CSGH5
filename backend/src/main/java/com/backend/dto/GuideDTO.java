@@ -8,7 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GuideDTO {
-    
+
     private String id;
     private String content;
 }
+

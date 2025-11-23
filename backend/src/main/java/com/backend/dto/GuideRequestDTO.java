@@ -9,9 +9,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GuideRequestDTO {
-    
+
     @NotBlank(message = "Content is required")
     private String content;
-    
+
     private Long userId; // To associate guide with user
 }
+
