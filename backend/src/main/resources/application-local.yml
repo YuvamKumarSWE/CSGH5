@@ -1,14 +1,17 @@
 spring:
-  profiles: local
+  config:
+    activate:
+      on-profile: local
+
   # Server Configuration
   server:
     port: 8080
   
   # PostgreSQL DataSource Configuration (Local)
   datasource:
-    url: jdbc:postgresql://localhost:5432/
-    username: 
-    password: 
+    url: jdbc:postgresql://localhost:5432/users
+    username: yuvam
+    password: yuvam
     driver-class-name: org.postgresql.Driver
   
   # JPA/Hibernate Configuration (Local Development)
@@ -25,9 +28,9 @@ spring:
   # MongoDB Configuration (Local)
   data:
     mongodb:
-      uri: mongodb://localhost:27017/
-      database: 
-  
+      uri: mongodb://localhost:27017/guide
+      database: guide
+
   # Security Configuration (Local Development)
   security:
     user:
