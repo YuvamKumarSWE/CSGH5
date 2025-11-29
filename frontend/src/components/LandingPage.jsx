@@ -1,225 +1,135 @@
-import { Box, Container, Typography, Button, Alert, CircularProgress } from '@mui/material';
+import { Box, Container, Typography, Button, Grid, useTheme } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import ApiIcon from '@mui/icons-material/Api';
-import { useState } from 'react';
-import apiService from '../services/api';
+import { motion } from 'framer-motion';
+import Navbar from './Navbar';
+
+const GridSection = ({ title, children, borderTop = true }) => (
+  <Box
+    sx={{
+      borderTop: borderTop ? '1px solid rgba(255, 255, 255, 0.1)' : 'none',
+      borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+      py: 8,
+      position: 'relative',
+    }}
+  >
+    <Container maxWidth="xl">
+      <Grid container spacing={0}>
+        <Grid item xs={12} md={3} sx={{ borderRight: { md: '1px solid rgba(255, 255, 255, 0.1)' }, pr: 4 }}>
+          <Typography variant="h6" sx={{ color: 'rgba(255, 255, 255, 0.5)', fontWeight: 400 }}>
+            [ {title} ]
+          </Typography>
+        </Grid>
+        <Grid item xs={12} md={9} sx={{ pl: { md: 8 }, pt: { xs: 4, md: 0 } }}>
+          {children}
+        </Grid>
+      </Grid>
+    </Container>
+  </Box>
+);
 
 function LandingPage() {
   const navigate = useNavigate();
-  const [apiMessage, setApiMessage] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-
-  const handleTestApi = async () => {
-    setLoading(true);
-    setError('');
-    setApiMessage('');
-    
-    try {
-      const data = await apiService.getBaseMessage();
-      setApiMessage(data.message);
-    } catch (err) {
-      setError(err.response?.data?.message || err.message || 'Failed to connect to API. Make sure the FastAPI server is running on port 8000.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const theme = useTheme();
 
   return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        background: 'linear-gradient(180deg, #0d1117 0%, #161b22 100%)',
-        padding: 3,
-      }}
-    >
-      <Container maxWidth="md">
-        <Box
-          sx={{
-            textAlign: 'center',
-            animation: 'fadeIn 1s ease-in',
-            '@keyframes fadeIn': {
-              from: { opacity: 0, transform: 'translateY(20px)' },
-              to: { opacity: 1, transform: 'translateY(0)' },
-            },
-          }}
-        >
-          <AutoStoriesIcon
-            sx={{
-              fontSize: 80,
-              color: 'primary.main',
-              mb: 3,
-              animation: 'pulse 2s ease-in-out infinite',
-              '@keyframes pulse': {
-                '0%, 100%': { opacity: 1 },
-                '50%': { opacity: 0.7 },
-              },
-            }}
-          />
-          
-          <Typography
-            variant="h2"
-            component="h1"
-            gutterBottom
-            sx={{
-              fontWeight: 700,
-              background: 'linear-gradient(90deg, #58a6ff 0%, #79c0ff 100%)',
-              backgroundClip: 'text',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              mb: 2,
-            }}
-          >
-            StudyForgeAI
-          </Typography>
-          
-          <Typography
-            variant="h5"
-            sx={{
-              color: 'text.secondary',
-              mb: 4,
-              fontWeight: 400,
-            }}
-          >
-            Turn multiple sources into one perfect study guide
-          </Typography>
-          
-          <Box sx={{ mb: 6 }}>
-            <Typography variant="body1" sx={{ color: 'text.primary', mb: 2 }}>
-              📄 Upload PDFs • 🌐 Add Web Articles • 🎥 Include Videos
-            </Typography>
-            <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-              Get a single, comprehensive study guide tailored to your needs
-            </Typography>
-          </Box>
-          
-          <Button
-            variant="contained"
-            size="large"
-            endIcon={<ArrowForwardIcon />}
-            onClick={() => navigate('/dashboard')}
-            sx={{
-              py: 1.5,
-              px: 4,
-              fontSize: '1.1rem',
-              fontWeight: 600,
-              boxShadow: '0 0 20px rgba(88, 166, 255, 0.3)',
-              '&:hover': {
-                boxShadow: '0 0 30px rgba(88, 166, 255, 0.5)',
-                transform: 'translateY(-2px)',
-                transition: 'all 0.3s ease',
-              },
-            }}
-          >
-            Get Started
-          </Button>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', className: 'grid-bg' }}>
+      <Navbar />
 
-          {/* API Test Section */}
-          <Box sx={{ mt: 4 }}>
-            <Button
-              variant="outlined"
-              size="medium"
-              startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <ApiIcon />}
-              onClick={handleTestApi}
-              disabled={loading}
-              sx={{
-                py: 1,
-                px: 3,
-                fontSize: '0.9rem',
-                fontWeight: 500,
-                borderColor: 'primary.main',
-                color: 'primary.main',
-                '&:hover': {
-                  borderColor: 'primary.light',
-                  bgcolor: 'rgba(88, 166, 255, 0.1)',
-                },
-              }}
-            >
-              {loading ? 'Connecting...' : 'Test API Connection'}
-            </Button>
-
-            {apiMessage && (
-              <Alert 
-                severity="success" 
-                sx={{ 
-                  mt: 2, 
-                  maxWidth: 500, 
-                  mx: 'auto',
-                  bgcolor: 'rgba(46, 160, 67, 0.1)',
-                  color: 'success.light',
-                }}
+      {/* Hero Section */}
+      <Box
+        sx={{
+          minHeight: '80vh',
+          display: 'flex',
+          alignItems: 'center',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+          pt: 8,
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
+        <Container maxWidth="xl">
+          <Grid container spacing={0} alignItems="center">
+            {/* Left: Text */}
+            <Grid item xs={12} md={8} sx={{ borderRight: { md: '1px solid rgba(255, 255, 255, 0.1)' }, pr: { md: 8 }, py: 8 }}>
+              <motion.div
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8 }}
               >
-                <Typography variant="body2">
-                  <strong>API Response:</strong> {apiMessage}
+                <Typography variant="h6" sx={{ color: 'primary.main', mb: 2, fontWeight: 600 }}>
+                  INTELLIGENT STUDY FUSION
                 </Typography>
-              </Alert>
-            )}
+                <Typography
+                  variant="h1"
+                  sx={{
+                    fontSize: { xs: '3.5rem', md: '5rem' },
+                    fontWeight: 600,
+                    lineHeight: 1,
+                    mb: 4,
+                    letterSpacing: '-0.03em',
+                  }}
+                >
+                  Revolutionizing <br />
+                  <span style={{ color: theme.palette.primary.main }}>Knowledge</span> <br />
+                  Synthesis
+                </Typography>
 
-            {error && (
-              <Alert 
-                severity="error" 
-                sx={{ 
-                  mt: 2, 
-                  maxWidth: 500, 
-                  mx: 'auto',
-                  bgcolor: 'rgba(248, 81, 73, 0.1)',
-                  color: 'error.light',
-                }}
-              >
-                <Typography variant="body2">
-                  {error}
+                <Typography variant="h5" sx={{ color: 'text.secondary', mb: 6, maxWidth: '600px', fontWeight: 400 }}>
+                  Turn multiple sources into one perfect study guide. Upload PDFs, add web links, and include videos to generate a comprehensive learning resource.
                 </Typography>
-              </Alert>
-            )}
-          </Box>
-          
-          <Box
-            sx={{
-              mt: 8,
-              display: 'flex',
-              justifyContent: 'space-around',
-              flexWrap: 'wrap',
-              gap: 3,
-            }}
-          >
+
+                <Box sx={{ display: 'flex', gap: 2 }}>
+                  <Button
+                    variant="contained"
+                    size="large"
+                    endIcon={<ArrowForwardIcon />}
+                    onClick={() => navigate('/dashboard')}
+                    sx={{
+                      bgcolor: 'primary.main',
+                      color: '#fff',
+                      px: 4,
+                      py: 2,
+                      fontSize: '1.1rem',
+                      '&:hover': { bgcolor: 'primary.dark' }
+                    }}
+                  >
+                    Get Started
+                  </Button>
+                </Box>
+              </motion.div>
+            </Grid>
+
+            {/* Right: Empty space */}
+            <Grid item xs={12} md={4} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', minHeight: '400px' }}>
+            </Grid>
+          </Grid>
+        </Container>
+      </Box>
+
+      {/* Features Grid */}
+      <Box sx={{ borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
+        <Container maxWidth="xl" disableGutters>
+          <Grid container>
             {[
-              { title: 'Smart Fusion', desc: 'AI-powered content merging' },
-              { title: 'Multi-Source', desc: 'PDFs, web, and video support' },
-              { title: 'One Output', desc: 'Single cohesive study guide' },
+              { title: 'PDF Analysis', desc: 'Deep semantic understanding of your documents.' },
+              { title: 'Web Synthesis', desc: 'Real-time integration of web resources.' },
+              { title: 'Video Processing', desc: 'Extract key insights from educational videos.' }
             ].map((feature, index) => (
-              <Box
-                key={index}
-                sx={{
-                  flex: '1 1 200px',
-                  p: 3,
-                  borderRadius: 2,
-                  border: '1px solid',
-                  borderColor: 'divider',
-                  bgcolor: 'background.paper',
-                  transition: 'all 0.3s ease',
-                  '&:hover': {
-                    borderColor: 'primary.main',
-                    transform: 'translateY(-4px)',
-                  },
-                }}
-              >
-                <Typography variant="h6" sx={{ mb: 1, color: 'primary.main' }}>
-                  {feature.title}
-                </Typography>
-                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                  {feature.desc}
-                </Typography>
-              </Box>
+              <Grid item xs={12} md={4} key={index} sx={{
+                borderRight: { md: '1px solid rgba(255, 255, 255, 0.1)' },
+                borderBottom: { xs: '1px solid rgba(255, 255, 255, 0.1)', md: 'none' },
+                p: 6
+              }}>
+                <Typography variant="h3" sx={{ color: 'primary.main', mb: 2, opacity: 0.5 }}>0{index + 1}</Typography>
+                <Typography variant="h5" sx={{ mb: 2, fontWeight: 600 }}>{feature.title}</Typography>
+                <Typography variant="body1" color="text.secondary">{feature.desc}</Typography>
+              </Grid>
             ))}
-          </Box>
-        </Box>
-      </Container>
+          </Grid>
+        </Container>
+      </Box>
+
     </Box>
   );
 }

@@ -5,49 +5,75 @@ const theme = createTheme({
   palette: {
     mode: 'dark',
     primary: {
-      main: '#58a6ff', // GitHub blue
-      dark: '#1f6feb',
-      light: '#79c0ff',
+      main: '#0033FF', // Intelliphy Blue
+      light: '#4D70FF',
+      dark: '#0022CC',
+      contrastText: '#FFFFFF',
     },
     secondary: {
-      main: '#8b949e', // GitHub gray
-      dark: '#6e7681',
-      light: '#b1bac4',
+      main: '#FFFFFF',
+      dark: '#E0E0E0',
+      light: '#FFFFFF',
+      contrastText: '#000000',
     },
     background: {
-      default: '#0d1117', // GitHub dark background
-      paper: '#161b22', // GitHub card background
+      default: '#020205', // Very deep, almost black blue
+      paper: '#05050A',
     },
     text: {
-      primary: '#c9d1d9', // GitHub primary text
-      secondary: '#8b949e', // GitHub secondary text
+      primary: '#FFFFFF',
+      secondary: 'rgba(255, 255, 255, 0.6)',
     },
-    success: {
-      main: '#3fb950', // GitHub green
-    },
-    error: {
-      main: '#f85149', // GitHub red
-    },
-    warning: {
-      main: '#d29922', // GitHub yellow
-    },
+    divider: 'rgba(255, 255, 255, 0.1)',
   },
   typography: {
-    fontFamily: [
-      '-apple-system',
-      'BlinkMacSystemFont',
-      '"Segoe UI"',
-      'Helvetica',
-      'Arial',
-      'sans-serif',
-    ].join(','),
+    fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+    h1: {
+      fontWeight: 600,
+      letterSpacing: '-0.03em',
+      lineHeight: 1.1,
+    },
+    h2: {
+      fontWeight: 600,
+      letterSpacing: '-0.02em',
+    },
+    h3: {
+      fontWeight: 500,
+      letterSpacing: '-0.02em',
+    },
+    button: {
+      fontWeight: 500,
+      textTransform: 'none',
+      letterSpacing: '0.01em',
+    },
   },
   components: {
     MuiButton: {
       styleOverrides: {
         root: {
-          textTransform: 'none',
-          borderRadius: 6,
+          borderRadius: 0, // Sharp corners for grid look
+          padding: '12px 24px',
+          boxShadow: 'none',
+          border: '1px solid transparent',
+          transition: 'all 0.2s ease',
+          '&:hover': {
+            boxShadow: 'none',
+            transform: 'translateY(-1px)',
+          },
+        },
+        containedPrimary: {
+          backgroundColor: '#0033FF',
+          '&:hover': {
+            backgroundColor: '#0022CC',
+          },
+        },
+        outlined: {
+          borderColor: 'rgba(255, 255, 255, 0.2)',
+          color: '#FFFFFF',
+          '&:hover': {
+            borderColor: '#FFFFFF',
+            backgroundColor: 'rgba(255, 255, 255, 0.05)',
+          },
         },
       },
     },
@@ -55,6 +81,20 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           backgroundImage: 'none',
+          backgroundColor: '#05050A',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          borderRadius: 0, // Sharp corners
+          boxShadow: 'none',
+        },
+      },
+    },
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          backgroundColor: 'rgba(2, 2, 5, 0.8)',
+          backdropFilter: 'blur(12px)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+          boxShadow: 'none',
         },
       },
     },
