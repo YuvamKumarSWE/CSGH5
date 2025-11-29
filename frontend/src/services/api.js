@@ -7,10 +7,7 @@ const apiService = {
     return response.data;
   },
 
-  verifyPassword: async (password) => {
-    const response = await axiosInstance.post('/api/verify-password', { password });
-    return response.data;
-  },
+
 
   getOutput: async (formData) => {
     const response = await axiosInstance.post('/api/get-output', formData, {

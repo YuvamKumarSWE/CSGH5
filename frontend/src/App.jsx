@@ -1,20 +1,8 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import theme from './theme';
-import Password from './components/Password';
 import LandingPage from './components/LandingPage';
 import Dashboard from './components/Dashboard';
-
-// Protected Route component
-function ProtectedRoute({ children }) {
-  const isAuthenticated = sessionStorage.getItem('authenticated') === 'true';
-  
-  if (!isAuthenticated) {
-    return <Navigate to="/" replace />;
-  }
-  
-  return children;
-}
 
 function App() {
   return (
@@ -22,23 +10,9 @@ function App() {
       <CssBaseline />
       <Router>
         <Routes>
-          <Route path="/" element={<Password />} />
-          <Route 
-            path="/landing" 
-            element={
-              <ProtectedRoute>
-                <LandingPage />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/dashboard" 
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } 
-          />
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/landing" element={<Navigate to="/" replace />} />
+          <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
       </Router>
     </ThemeProvider>
